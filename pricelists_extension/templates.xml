@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+                <record id="pricelist_product_configuration_form_view" model="ir.ui.view">
+                    <field name="name">pricelist_product_configuration_form_view</field>
+                    <field name="model">pricelist.configuration</field>
+                    <field name="type">form</field>
+                    <field name="arch" type="xml">
+                        <form string="Price List Configuration">
+                    <header>
+                        <button name="generate_products" type="object" string="Generate Products" class= "oe_highlight"  attrs="{'invisible': [('stages','not in','validate')]}" />
+                        <button name="update_pricelist" type="object" string="Update Pricelists" class= "oe_highlight" attrs="{'invisible': [('stages','=','draft')]}" />
+                        <button name="inactive_pricelist" type="object" string="Deactive" class= "oe_highlight" attrs="{'invisible': [('stages','=','inactivate')]}"/>
+                        <button name="validate" type="object" string="Validate" class= "oe_highlight" attrs="{'invisible': [('stages','!=','draft')]}"/>
+
+                        <field name="stages" widget="statusbar" statusbar_visible="draft,validate,inactivate"/>
+                    </header>
+                            <sheet>
+                   
+                                <group name="group_top">
+                                    <group name="group_left"> 
+                                        <field name="category" attrs="{'readonly': [('stages','=',('validate','inactivate'))]}"/>
+                                        <field name="customer" attrs="{'invisible': [('type_pricelist','!=','customer')], 'readonly': [('stages','=',('validate','inactivate'))]}"/>
+                                        <field name="check_list" invisible="1"/>
+                                    </group>
+                                    <group name="group_right">
+                                        <field name="type_pricelist" attrs="{'readonly': [('stages','=',('validate','inactivate'))]}" />
+                                        <field name="based_on" attrs="{'invisible': [('type_pricelist','!=','customer')], 'readonly': [('stages','=',('validate','inactivate'))]}"/>
+                                        <field name="category_discount" attrs="{'invisible': [('based_on','!=','discount_cat')], 'readonly': [('stages','=',('validate','inactivate'))]}"/>
+                                    </group> 
+                                </group>
+                                <notebook>
+                                        <page string="Products">
+                                    
+                                                <field name="get_products_id" nolabel='1' attrs="{'invisible': [('type_pricelist','!=','normal')]}">
+                                                    <tree editable="bottom">
+                                                        <field name="product_id" reaonly = "1"/>
+                                                        <field name="list_price"/>
+                                                        <field name="price_level1"/>
+                                                        <field name="price_level2"/>
+                                                        <field name="price_level3"/>
+                                                    </tree>
+                                                </field>
+
+                                                <field name="get_products_id1" nolabel='1' attrs="{'invisible': ['|',('type_pricelist','!=','customer'),('based_on','!=','discount_prod')]}">
+                                                    <tree editable="bottom">
+                                                        <field name="product_id" reaonly = "1"/>
+                                                        <field name="discount_percentage"/>
+                                                    </tree>
+                                                </field> 
+
+
+                                                <field name="get_products_id2" nolabel='1' attrs="{'invisible': ['|',('type_pricelist','!=','customer'),('based_on','!=','fixed_price')]}">
+                                                    <tree editable="bottom">
+                                                        <field name="product_id" reaonly = "1"/>
+                                                        <field name="fixed_price"/>
+                                                    </tree>
+                                                </field>                                                
+           
+                                        </page>
+                   
+                                </notebook>
+                            </sheet>
+           
+                        </form>
+                    </field>
+                </record>
+
+            <!--========================[Tree View-START]=====================-->
+                <record id="pricelist_product_configuration_tree_view" model="ir.ui.view">
+                    <field name="name">pricelist_product_configuration_tree_view</field>
+                    <field name="model">pricelist.configuration</field>
+                    <field name="type">tree</field>
+                    <field name="arch" type="xml">
+                        <tree string="Price List Table">
+                            <field name="category"/>
+                            <field name="type_pricelist"/>
+                            <field name="customer"/>
+                            <field name="based_on"/>
+                            <field name="stages" widget="statusbar" statusbar_visible="draft,validate,inactivate"/>
+                        </tree>
+                    </field>
+                </record>
+            <!--************************[Tree View-ENDS]**********************-->
+
+            <!--========================[Action-START]========================-->
+
+                <record model="ir.actions.act_window" id="pricelist_product_configuration_action">
+                    <field name="name">Price List Configuration</field>
+                    <field name="res_model">pricelist.configuration</field>
+                    <field name="view_type">form</field>
+                    <field name="view_mode">tree,form</field>
+                </record>
+            <!--************************[Action-ENDS]*************************-->
+
+            <!--========================[Menu-START]==========================-->
+
+                <menuitem name="Pricelist Configuration" id="pricelist_product_configuration_menu" parent="sales_team.menu_sales" action="pricelist_product_configuration_action" sequence="101"/>   
+
+
+
+            <record id="pricelist_customer_form_customization" model="ir.ui.view">
+                    <field name="name">pricelist_customer_form_customization</field>
+                    <field name="model">res.partner</field>
+                    <field name="inherit_id" ref="product.view_partner_property_form"/>
+                    <field name="type">form</field>
+                    <field name="arch" type="xml">
+                        <xpath expr="//field[@name='property_product_pricelist']" position="after">
+
+                            <field name="linked_pricelist"/>
+                        </xpath>
+                    </field>
+                </record> 
+
+<!--             <record id="sale_order_line_extension" model="ir.ui.view">
+                <field name="name">sale_order_line_extension</field>
+                <field name="model">sale.order</field>
+                <field name="inherit_id" ref="sale.view_order_form"/>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_id']" 
+                    position="after">
+
+                    <field name="pricelist_ext" invisible = "1"/>
+                    <field name="price" domain="['&amp;',('product_id', '=', product_id),('pricelist_id', 'in', [2,3,4,5])]" attrs="{'readonly': [('check_boolean','=', True)]}" />
+                    <field name="check_boolean" invisible = "1"/>
+                    <field name="set_list_price"/>
+                </xpath>
+                </field>
+            </record>
+ -->
+
+            <record id="product_pricelist_item_extension" model="ir.ui.view">
+                <field name="name">product_pricelist_item_extension</field>
+                <field name="model">product.pricelist</field>
+                <field name="inherit_id" ref="product.product_pricelist_view"/>
+                <field name="type">form</field>
+                <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='item_ids']/tree/field[@name='min_quantity']" 
+                    position="after">
+
+                    <!-- <field name="record_name"/> -->
+                    <field name="config_id"/>
+
+
+                </xpath>
+
+                </field>
+            </record>
+
+            <record id="pricelist_list_price"   model="product.pricelist"> 
+                <field name="name">List Price</field> 
+            </record>
+
+            <record id="pricelist_level_1"   model="product.pricelist"> 
+                <field name="name">Level 1</field> 
+            </record>
+
+
+            <record id="pricelist_level_2"   model="product.pricelist"> 
+                <field name="name">Level 2</field> 
+            </record>
+
+
+            <record id="pricelist_level_3"   model="product.pricelist"> 
+                <field name="name">Level 3</field> 
+            </record>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <!-- <record id="pricelist_extension" model="ir.ui.view">
+                    <field name="name">pricelist_extension</field>
+                    <field name="model">product.pricelist.version</field>
+                    <field name="inherit_id" ref="product.product_pricelist_version_form_view"/>
+                    <field name="type">form</field>
+                    <field name="arch" type="xml">
+
+                        <xpath expr="/form/*" position="before">
+                        <header>
+                        <button name="create_rules" type="object" string="Update" class = "oe_highlight" />
+                        </header>
+                        </xpath>
+                       
+                        <xpath expr="//field[@name='items_id']" position="replace">
+                            <field name="items_id" nolabel='1'>
+                                <tree editable="bottom">
+                    <field name="name"/>
+                    <field name="product_id"/>
+                    <field name="product_tmpl_id"/>
+                    <field name="categ_id"/>
+                    <field name="min_quantity"/>
+                    <field name="base"/>
+                    <field name="price_discount" string = "Discount Percentage"/>
+                    <field name="price_surcharge" string = "Discount Amount"/>
+                              
+                                </tree>
+                            </field>
+                        </xpath>
+                        <xpath expr="//field[@name='pricelist_id']" position="after"> -->
+                            <!-- <field name="product_category" /> -->
+                            <!-- <field name="basis_price_list" /> -->
+                            <!-- <field name="default_amount" /> -->
+                            <!-- <field name="default_percentage" /> -->
+                            <!-- <field name="create_boolean"  /> -->
+   <!--                      </xpath>
+                    </field>
+                </record> -->
+
+         <!--        <record id="pricelist_wizard" model="ir.ui.view">
+                    <field name="name">pricelist_wizard</field>
+                    <field name="model">confirmation.pricelist</field>
+                    <field name="type">form</field>
+                    <field name="arch" type="xml">
+
+                <form string="Price List Wizard">
+                    <group name="group_top">
+                        <group name="group_left">  -->
+                           
+ <!--                            <button name="button_open_wizard_method" type="object" string="Confirm" class = "oe_highlight" />
+                        </group>
+                        <group name="group_right">
+                            <field name="year_receiving"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="create_request" 
+                            string="Done" type="object" 
+                            class="oe_highlight"/>
+                        <button string="Cancel" 
+                            class="btn-default" 
+                            special="cancel" />
+                    </footer>
+                </form>
+                    </field>
+                </record> -->
+<!--         <record id="pricelist_wizard_action" model="ir.actions.act_window">
+            <field name="name">pricelist_wizard_action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">confirmation.pricelist</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="pricelist_wizard"/>
+            <field name="target">new</field>
+        </record> -->
+    </data>
+</openerp>

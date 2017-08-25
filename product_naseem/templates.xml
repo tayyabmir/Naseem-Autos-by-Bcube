@@ -1,0 +1,703 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+   <record id="account_invoice_extension"   model="ir.ui.view"> 
+        <field name="name">account_invoice_extension</field> 
+        <field name="model">account.invoice</field> 
+        <field name="inherit_id" ref="account.invoice_form"/> 
+        <field name="arch" type="xml"> 
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="balance"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+    <record id="product_form_view_extension"   model="ir.ui.view"> 
+        <field name="name">product_form_view_extension</field> 
+        <field name="model">product.template</field> 
+        <field name="inherit_id" ref="product.product_template_only_form_view"/> 
+        <field name="arch" type="xml"> 
+            <field name="default_code" position="after">
+                <field name="hs_code"/> </field>
+            <field name="default_code" position="replace"/>
+
+            <xpath expr="//label[@for='sale_ok']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='sale_ok']" position="replace">
+                <field name="sale_ok" invisible = "1"/>
+                </xpath>
+
+            <xpath expr="//label[@for='purchase_ok']" position="replace">
+                </xpath>
+
+            <xpath expr="//field[@name='uom_id']" position="after">
+                <field name="minimum_level"/>
+                <field name="maximum_level"/>
+                <field name="qty_per_carton"/>
+
+                </xpath>
+
+            <xpath expr="//field[@name='attribute_line_ids']/tree/field[@name='value_ids']" position="replace">
+                <field name="value_ids" widget="many2many_tags" options="{'no_create_edit': True}" domain="['&amp;',('attribute_id', '=', attribute_id),('category_id', '=', parent.categ_id)]" context="{'default_attribute_id': attribute_id}"/>
+
+            </xpath>
+
+                <xpath expr="//field[@name='purchase_ok']" position="replace">
+                <field name="purchase_ok" invisible = "1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='list_price']" position="replace">
+                </xpath>
+
+                <xpath expr="//page[3]" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </xpath>
+
+<!--                 <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name = "list_price_own" />
+                    <field name = "level_1" />
+                    <field name = "level_2" />
+                    <field name = "level_3" />
+                </xpath> -->
+
+<!--                 <xpath expr="//field[@name='type']" position="after">
+                    <field name="foc"/>
+                </xpath>
+ -->
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="default_code" string="Product Code"/>
+                        <h1><field name="default_code" placeholder="Product Code"/></h1>
+                        <label class="oe_edit_only" for="name" string="Product Name"/>
+                        <h1><field name="name" placeholder="Product Name"/></h1>
+                        
+                    </div>
+                
+        </field> 
+    </record> 
+
+
+
+    
+
+
+<!-- Adding Net Weight, Gross Weight and CBM in Product.Product -->
+<record id="adding_weights_product_template"   model="ir.ui.view"> 
+        <field name="name">adding_weights_product_template</field> 
+        <field name="model">product.template</field> 
+        <field name="inherit_id" ref="stock.view_template_property_form"/> 
+        <field name="arch" type="xml"> 
+    
+            <xpath expr="//group[@name='group_lots_and_weight']" position="replace">
+
+                <group>
+                    <field name="net_weight"/>
+                    <field name="gross_weight"/>
+                    <field name="cbm"/>
+                </group>
+            </xpath> 
+                
+        </field> 
+
+    </record>
+
+<!-- Finishing  -->
+
+
+    <record id="address_contact_tree_view" model="ir.ui.view">
+        <field name="name">address_contact_tree_view</field>
+        <field name="model">address.contacts</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Price List Configuration">
+                <field name="customer_name" />
+                <field name="title" />
+                <field name="job_position" />
+                <field name="email" />
+                <field name="phone" />
+                <field name="mobile" />
+                <field name="address" />
+                <field name="invoice_address" />
+                <field name="shipping_address" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="address_contact_form_view" model="ir.ui.view">
+        <field name="name">address_contact_form_view</field>
+        <field name="model">address.contacts</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group name="group_top">
+                        <group name="group_left">
+                            <field name="customer_name" />
+                            <field name="title" />
+                            <field name="job_position" />
+                            <field name="email" />
+                        </group>
+                        <group name="group_left">
+                            <field name="phone" />
+                            <field name="mobile" />
+                            <field name="address" />
+                            <field name="invoice_address" />
+                            <field name="shipping_address" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+<!--     <record id="customer_tree_view_extension" model="ir.ui.view">
+        <field name="name">customer_tree_view_extension</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            
+            <xpath expr="//field[@name='display_name']" position="replace">
+                <field name="display_name" string="Customer Name"/>
+            </xpath>
+            
+            <xpath expr="//field[@name='display_name']" position="after">
+                <field name="country_id" />
+            </xpath>
+            
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="credit" />
+            </xpath>
+            
+            <xpath expr="//field[@name='credit']" position="after">
+                <field name="debit" />
+            </xpath>
+            <xpath expr="//field[@name='email']" position="after">
+                <field name="check_trans" invisible="1"/>
+            </xpath>
+
+        </field>
+    </record> -->
+
+
+<!-- Finishing  -->
+
+
+
+
+    <record id="category_in_attribute"   model="ir.ui.view"> 
+        <field name="name">category_in_attribute</field> 
+        <field name="model">product.attribute</field> 
+        <field name="inherit_id" ref="product.product_attribute_view_form"/> 
+        <field name="arch" type="xml"> 
+            <xpath expr="//field[@name='value_ids']/tree/field[@name='name']" position="after">
+                <field name="category_id" widget = "many2many_tags"/>
+            </xpath>
+ 
+        </field> 
+    </record>
+
+    <record id="hide_purchase_method_field_product"   model="ir.ui.view"> 
+        <field name="name">hide_purchase_method_field_product</field> 
+        <field name="model">product.template</field> 
+        <field name="inherit_id" ref="purchase.view_product_supplier_inherit"/> 
+        <field name="arch" type="xml"> 
+            <xpath expr="//field[@name='purchase_method']" position="replace">
+                <field name="purchase_method" invisible = "1"/>
+                </xpath>
+        </field> 
+    </record>
+
+        <record id="product.product_product_tree_view" model="ir.ui.view">
+            <field name="name">product.product.tree</field>
+            <field name="model">product.product</field>
+            <field eval="7" name="priority"/>
+            <field name="arch" type="xml">
+                <tree string="Product Variants">
+                    <field name="default_code"/>
+                    <field name="name"/>
+                    <field name="lst_price"/>
+                    <field name="price" invisible="not context.get('pricelist',False)"/>
+                    <field name="uom_id" options="{'no_open': True, 'no_create': True}" groups="product.group_uom"/>
+                    <field name="product_tmpl_id" invisible="1"/>
+                    <field name="active" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+
+
+    <record id="product_product_form_view_extension"   model="ir.ui.view"> 
+        <field name="name">product_product_form_view_extension</field> 
+        <field name="model">product.product</field> 
+        <field name="inherit_id" ref="product.product_normal_form_view"/> 
+        <field name="arch" type="xml"> 
+            <field name="default_code" position="after">
+                <field name="hs_code"/> 
+            </field>
+            <field name="default_code" position="replace"/>
+
+
+            <xpath expr="//label[@for='sale_ok']" position="replace">
+            </xpath>
+
+                <xpath expr="//field[@name='sale_ok']" position="replace">
+                <field name="sale_ok" invisible = "1"/>
+                </xpath>
+
+
+                <xpath expr="//field[@name='type']" position="after">
+                    <field name="foc" />
+                </xpath>
+
+            <xpath expr="//label[@for='purchase_ok']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='purchase_ok']" position="replace">
+                <field name="purchase_ok" invisible = "1"/>
+                </xpath>
+
+        <xpath expr="//page[3]" position="attributes">
+            <attribute name="invisible">1</attribute>
+        </xpath>
+
+            <xpath expr="//label[@for='name']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='name']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='lst_price']" position="replace">
+                </xpath>
+
+                <xpath expr="//field[@name='categ_id']" position="after">
+                    <field name = "list_price_own" />
+                    <field name = "level_1" />
+                    <field name = "level_2" />
+                    <field name = "level_3" />
+                </xpath>
+
+                 <xpath expr="//field[@name='type']" position="after">
+                    <field name= "uom" />
+                    <field name="pcs_per_carton" required="1"/>
+                </xpath>
+
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="default_code" string="Product Code"/>
+                        <h1><field name="default_code" placeholder="Product Code"/></h1>
+                        <label class="oe_edit_only" for="name" string="Product Name"/>
+                        <h1><field name="name" placeholder="Product Name"/></h1>
+                        <!-- <label class="oe_edit_only" for="attribute_value_ids" string="Attributes"/>
+                        <field name="attribute_value_ids" widget = "many2many_tags"/>
+                         -->
+                    </div>
+
+                <xpath expr="//field[@name='uom_id']" position="after">
+                     <field name="minimum_level"/>
+                     <field name="maximum_level"/>
+
+                </xpath>
+                <xpath expr="//field[@name='name']" position="after">
+                <h5>Vendor Description</h5>
+                <field name="prod_desc"/>
+            </xpath>
+            <xpath expr="//field[@name='standard_price']" position="replace">
+                <field name="standard_price" readonly="1"/> 
+            </xpath>
+            <xpath expr="//field[@name='foc']" position="after">
+                <field name="inventory_prod"/>
+                </xpath>
+
+        <xpath expr="//page[1]" position="after">
+            <page name="history" string="History">
+                <group>
+                    <group>
+                        <field name="previouse_purchase" invisible="1"/>
+                        <field name="previouse_qty" invisible="1"/>
+                        <field name="average_cost"/>
+                    </group>
+                </group>
+                <field name="history_link">
+                    <tree editable="bottom">
+                        <field name="date"/>
+                        <field name="qty"/>
+                        <!-- <field name="carton"/> -->
+                        <field name="unit_price"/>
+                        <field name="pre_qty"/>
+                        <!-- <field name="pre_carton"/> -->
+                        <field name="adjustment"/>
+                        <field name="net"/>
+                        <field name="pre_price"/>
+                        <field name="avg_price"/>
+                        <field name="po_qty"/>
+                        <field name="po_no"/>
+                    </tree>
+                </field>
+            </page>
+        </xpath>
+        </field> 
+    </record>
+
+
+
+
+    <record id="product_product_tree_view_extension"   model="ir.ui.view"> 
+        <field name="name">product_product_tree_view_extension</field> 
+        <field name="model">product.product</field> 
+        <field name="inherit_id" ref="product.product_product_tree_view"/> 
+        <field name="arch" type="xml"> 
+
+                <xpath expr="//field[@name='lst_price']" position="replace">
+                    <field name="list_price_own"/>
+                </xpath>
+        </field> 
+    </record>
+
+
+
+
+
+    <record id="unit_of_measure_customization" model="ir.ui.view">
+            <field name="name">unit_of_measure_customization</field>
+            <field name="model">product.uom</field>
+            <field name="inherit_id" ref="product.product_uom_form_view"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='category_id']" position="replace">
+                <field name="category_id" invisible = "1"/>
+                </xpath>
+                <xpath expr="//field[@name='uom_type']" position="replace">
+                <field name="uom_type" invisible = "1"/>
+                </xpath>
+                <xpath expr="//field[@name='active']" position="replace">
+                <field name="active" invisible = "1"/>
+                </xpath>
+                <xpath expr="//field[@name='rounding']" position="replace">
+                <field name="rounding" invisible = "1"/>
+                </xpath>
+                <xpath expr="//field[@name='name']" position="replace">
+                <field name="name" string = "Name"/>
+                </xpath>
+        </field>
+        </record>
+
+            <record id="stock_account.view_category_property_form" model="ir.ui.view">
+                    <field name="arch" type="xml">
+                        <data>
+                    <group name="account_property" position="inside">
+                        <group name="account_stock_property" string="Account Stock Properties">
+                            <field name="property_stock_account_input_categ_id" domain="[('deprecated', '=', False)]"/>
+                            <field name="property_stock_account_output_categ_id" domain="[('deprecated', '=', False)]"/>
+                            <field name="property_stock_valuation_account_id" domain="[('deprecated', '=', False)]"/>
+                            <field name="property_stock_journal"/>
+                        </group>
+                    </group>
+                    <group name="account_property" position="before">
+                        <group>
+                            <group string="Inventory Valuation" name = "inventory">
+                                <field name="property_cost_method" groups="stock_account.group_inventory_valuation"/>
+                                <field name="property_valuation"/>
+                            </group>
+                        </group>
+                    </group>
+                </data>
+
+                </field>
+            </record>
+
+<!--         <record id="hide_inventory_valuation_categories" model="ir.ui.view">
+            <field name="name">hide_inventory_valuation_categories</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="stock_account.view_category_property_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+
+                <xpath expr="//group[@name='inventory']" position="replace">
+                    <field name="property_cost_method" invisible = "1"/>
+                </xpath>
+            </field>
+        </record> -->
+
+        <record id="stock.product_category_form_view_inherit" model="ir.ui.view">
+            <field name="arch" type="xml">
+                <group name="first" position="after">
+                    <group string="Logistics" >
+                        <field name="route_ids" widget="many2many_tags"/>
+                        <div colspan="2" attrs="{'invisible': [('parent_id', '=', False)]}">
+                            The following routes will apply to the products in this category taking into account parent categories: 
+                            <field name="total_route_ids" nolabel="1" widget="many2many_tags"/>
+                        </div>
+                        <field name="removal_strategy_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
+            </field>
+        </record>
+
+
+
+
+
+
+
+        <record model="ir.actions.act_window" id="action_cfc">
+            <field name="name">Free Product</field>
+            <field name="res_model">product.product</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain" >[('foc', '=',True)]</field> 
+            <field name="context" eval="{'default_foc': 1}"/> 
+        </record>
+
+
+
+        <record id="product.product_normal_action_sell" model="ir.actions.act_window">
+            <field name="name">Product</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_type">form</field>
+            <field name="context">{"search_default_filter_to_sell":1}</field>
+            <field name="domain" >[('foc', '!=',True)]</field>
+        </record>
+
+        <record id="product.product_template_action" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">product.template</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="product.product_template_kanban_view"/>
+            <field name="context">{"search_default_filter_to_sell":1}</field>
+            <field name="domain" >[('foc', '!=',True)]</field>
+        </record>
+
+
+        <menuitem name="Free Product"
+            id="free_product"
+            parent="sales_team.menu_sales"
+            action="action_cfc"
+            sequence="100" />
+
+        <menuitem id="sale.menu_products"
+            name="Products"
+            action="product.product_normal_action_sell"
+            parent="sales_team.menu_sales"
+            groups="product.group_product_variant" sequence="99"/>
+
+
+         <record id="x_hide_quotation2" model="res.groups">
+            <field name="name">x_hide_quotations</field>
+        </record>
+
+
+
+        <menuitem action="product.product_template_action"
+            id="sale.menu_product_template_action"
+            parent="x_hide_quotation2"
+            sequence="13"
+            name= "Product Template"/>
+
+
+ <record id="product_search_form_view_extension" model="ir.ui.view">
+            <field name="name">product_search_form_view_extension</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="arch" type="xml">
+                <field name="pricelist_id" position="before">
+                    <field name="warehouse_id" />
+                </field>
+            </field>
+        </record>
+
+
+
+<!-- Adding Date of Birth in Customer -->
+
+<!-- <record id="add_dob_customer"   model="ir.ui.view"> 
+        <field name="name">add_dob_customer</field> 
+        <field name="model">res.partner</field> 
+        <field name="inherit_id" ref="base.view_partner_form"/> 
+        <field name="arch" type="xml"> 
+    
+                <xpath expr="//field[@name='function']" position="after">
+                <field name="dob"/>
+                </xpath>                
+        </field> 
+    </record> -->
+
+
+<!-- Adding Wizard From in Sale Order -->
+
+    <record id="genrate_wizard_button" model="ir.ui.view">
+            <field name="name">genrate_wizard_button</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/> 
+            <field name="arch" type="xml"> 
+                <header>
+                    <xpath expr="//button[@name='action_confirm']" position="after">
+                        <button name="generate_wizard" string="Add Products" type="object" class="oe_highlight" context="{'default_sale_boolean': 0}" attrs="{'invisible': [('state', 'in',('sale','complete'))]}" />
+                    </xpath>
+                </header>
+            </field>
+        </record>
+
+
+<record id="sale_order_wizard_form" model="ir.ui.view">
+            <field name="name">sale_order_wizard_form</field>
+            <field name="model">wizard.class</field>
+            <field name="arch" type="xml">
+                <form string="Generate Products">
+                    <group name="group_top">
+                        <group name="group_left"> 
+                            <!-- <field name="client_name"/> -->
+                            <field name="category"/>
+                            <field name="sale_boolean" invisible="1"/>
+
+                        </group>
+                        <group name="group_right">
+                        </group>
+                    </group>
+                   <field name="product_tree">
+                        <tree editable="bottom">
+                            <field name="product"/>
+                            <field name="qty"/>
+                            <field name="carton"/>
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="generate" 
+                            string="Done" type="object" 
+                            class="oe_highlight" attrs="{'invisible': [('sale_boolean', '=',True)]}" />
+                        <button name="generate_purchase" 
+                            string="Done Purchase" type="object" 
+                            class="oe_highlight" attrs="{'invisible': [('sale_boolean', '=',False)]}" />
+
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+
+
+<record id="sale_order_wizard" model="ir.actions.act_window">
+            <field name="name">sale_order_wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">wizard.class</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="sale_order_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+<!-- Adding Odered ctn field in tree -->
+
+<record id="sale_order_ctn_field" model="ir.ui.view">
+            <field name="name">sale_order_ctn_field</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom_qty']" position="after">
+                    <field name="carton" />
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='qty_delivered']" position="replace">
+                    <field name="qty_delivered" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='qty_invoiced']" position="replace">
+                    <field name="qty_invoiced" invisible="1"/>
+                </xpath>
+                <xpath expr="//field[@name='order_line']/tree/field[@name='tax_id']" position="replace">
+                    <field name="tax_id" invisible="1"/>
+                </xpath>
+
+            </field>
+
+        </record>
+
+
+
+
+    <record id="purchase.view_category_property_form" model="ir.ui.view">
+            <field name="name">product.category.property.form.inherit.stock</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="account.view_category_property_form"/>
+            <field name="arch" type="xml">
+                <field name="property_account_income_categ_id" position="before">
+                    <field name="property_account_creditor_price_difference_categ" domain="[('deprecated','=',False)]"/>
+                </field>
+            </field>
+        </record>
+
+
+        <record id="product.product_normal_form_view" model="ir.ui.view">
+            <field name="name">product.product.form</field>
+            <field name="model">product.product</field>
+            <field name="mode">primary</field>
+            <field eval="7" name="priority"/>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <form position="attributes">
+                    <attribute name="string">Product Variant</attribute>
+                </form>
+                <field name="type" position="after">
+                    <field name="default_code"/>
+                    <field name="barcode"/>
+                </field>
+                <field name="list_price" position="attributes">
+                   <attribute name="name">lst_price</attribute>
+                   <attribute name="attrs">{'readonly': [('product_variant_count', '&gt;', 1)]}</attribute>
+                </field>
+                <field name="name" position="after">
+                    <field name="product_tmpl_id" class="oe_inline" readonly="1" invisible="1" attrs="{'required': [('id', '!=', False)]}"/>
+                </field>
+                <field name="item_ids" position="replace">
+                    <field name="pricelist_item_ids" widget="many2many">
+                        <tree string="Pricelist Items">
+                            <field name="pricelist_id"/>
+                            <field name="name" string="Applicable On"/>
+                            <field name="min_quantity"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="price" string="Price"/>
+                            <field name="base" invisible="1"/>
+                            <field name="sequence" invisible="1"/>
+                            <field name="price_discount" invisible="1"/>
+                            <field name="applied_on" invisible="1"/>
+                            <field name="compute_price" invisible="1"/>
+                        </tree>
+                    </field>
+                </field>
+<!--                 <xpath expr="//div[@class='oe_title']" position="inside">
+                    <field name="attribute_value_ids" widget="many2many_tags" groups="product.group_product_variant"/>
+                </xpath> -->
+            </field>
+        </record>
+
+     <record id="account.view_category_property_form" model="ir.ui.view">
+            <field name="name">product.category.property.form.inherit</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <group name="first" position="after">
+                    <group name="account_property" groups="account.group_account_manager">
+                        <group string="Account Properties">
+                            <field name="property_account_income_categ_id"/>
+                            <field name="property_account_expense_categ_id"/>
+                        </group>
+                    </group>
+                </group>
+            </field>
+        </record>
+
+
+
+</odoo>
