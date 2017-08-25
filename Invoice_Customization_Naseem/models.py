@@ -80,7 +80,7 @@ class stock_picking_own(models.Model):
 				x.amount 		= self.bilty_paid + self.packing_expense
 				
 				updated = True
-
+		print "Hello Test"
 		if updated == False:
 			create_lines = cash_entries_lines.create({
 				'date':self.min_date,
